@@ -255,6 +255,12 @@
                 </listitem>
             </varlistentry>
             <varlistentry>
+                <term>guid</term>
+                <listitem>
+                    <para>The Windows-assigned GUID of the volume</para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
                 <term>type</term>
                 <listitem>
                     <para>
@@ -303,6 +309,15 @@
                     The volume mounting hint. This value specifies how Windows
                     expects the volume to be mounted. For a volume with an
                     assigned drive letter, it might be 'E:'.
+                    </para>
+                </listitem>
+            </varlistentry>
+            <varlistentry>
+                <term>device</term>
+                <listitem>
+                    <para>
+                    The host device-mapper device which was created for this
+                    volume if any (e.g. /dev/mapper/ldm_vol_Machine-Dg0_Volume1)
                     </para>
                 </listitem>
             </varlistentry>
@@ -568,10 +583,12 @@ ldm> show diskgroup 06495a84-fbfd-11e1-8cf9-52540061f5db
 ldm> show volume 06495a84-fbfd-11e1-8cf9-52540061f5db Volume1
 {
   "name" : "Volume1",
+  "guid" : "c08309e9-1d30-43e5-8dc3-fcec8be76fcc",
   "type" : "spanned",
   "size" : 129024,
   "chunk-size" : 0,
   "hint" : "E:",
+  "device" : "ldm_vol_WIN-ERRDJSBDAVF-Dg0_Volume1",
   "partitions" : [
     "Disk1-01",
     "Disk2-01"
@@ -634,6 +651,16 @@ ldm> create volume 06495a84-fbfd-11e1-8cf9-52540061f5db Volume1
     <literal>ldm_vol_WIN-ERRDJSBDAVF-Dg0_Volume1</literal>. Depending on how
     udev is configured, it will probably now be available as
     <literal>/dev/mapper/ldm_vol_WIN-ERRDJSBDAVF-Dg0_Volume1</literal>.
+    </para>
+
+    <para>
+        Note that returned name of the created device-mapper device is unmangled
+        and thus can contains not-whitelisted characters. User-space
+        device-mapper tools (like <literal>dmsetup</literal>) and
+        <literal>libdevmapper</literal> library accept unmangled names (if
+        properly configured) but take extra care composing path to a created
+        device yourself. Consider using <literal>"device"</literal> field of the
+        <command>show volume</command> command output.
     </para>
 
     <para>

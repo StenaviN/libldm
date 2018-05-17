@@ -370,6 +370,16 @@ GArray *ldm_volume_get_partitions(LDMVolume *o);
 gchar *ldm_volume_get_name(const LDMVolume *o);
 
 /**
+ * ldm_volume_get_guid:
+ * @o: An #LDMVolume
+ *
+ * Get the Windows-assigned GUID of a volume.
+ *
+ * Returns: (transfer full): The string representation of the GUID
+ */
+gchar *ldm_volume_get_guid(const LDMVolume *o);
+
+/**
  * ldm_volume_get_voltype:
  * @o: An #LDMVolume
  *
@@ -433,11 +443,26 @@ guint64 ldm_volume_get_chunk_size(const LDMVolume *o);
  * @o: An #LDMVolume
  *
  * Get the name of the device mapper device which will be created for this
- * volume.
+ * volume. Note that returned name is unmangled. Device mapper will mangle
+ * actual device name if it contains invalid characters.
  *
  * Returns: (transfer full): The device mapper name
  */
 GString *ldm_volume_dm_get_name(const LDMVolume *o);
+
+/**
+ * ldm_volume_dm_get_device:
+ * @o: An #LDMVolume
+ * @err: A #GError to receive any generated errors
+ *
+ * Get the host device mapper device which was created for this volume
+ * (e.g. /dev/mapper/ldm_vol_Red-nzv8x6obywgDg0_Volume3). It is dynamic
+ * runtime property and it will be NULL if device mapper device is absent.
+ *
+ * Returns: (transfer full): The host device mapper device if present,
+ *          or NULL otherwise
+ */
+gchar *ldm_volume_dm_get_device(const LDMVolume * const o, GError **err);
 
 /**
  * ldm_volume_dm_create:
@@ -512,6 +537,20 @@ guint64 ldm_partition_get_start(const LDMPartition *o);
  * Returns: The size, in sectors
  */
 guint64 ldm_partition_get_size(const LDMPartition *o);
+
+/**
+ * ldm_partition_dm_get_device:
+ * @o: An #LDMPartition
+ * @err: A #GError to receive any generated errors
+ *
+ * Get the host device mapper device which was created for this partition
+ * (e.g. /dev/mapper/ldm_part_Red-nzv8x6obywgDg0_Disk1-01). It is dynamic
+ * runtime property and it will be NULL if device mapper device is absent.
+ *
+ * Returns: (transfer full): The host device mapper device if present,
+ *          or NULL otherwise
+ */
+gchar *ldm_partition_dm_get_device(const LDMPartition * const o, GError **err);
 
 /**
  * ldm_disk_get_name
